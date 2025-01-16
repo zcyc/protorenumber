@@ -1,6 +1,6 @@
 # ProtoRenumber
 
-ProtoRenumber is a command-line tool written in Rust that renumbers the fields in Protobuf (`.proto') files, preserving the original field order
+ProtoRenumber is a command-line tool written in Rust that renumbers the fields in Protobuf (`.proto`) files, preserving the original field order
 
 The tool is particularly useful for developers who want to clean up or reorganise Protobuf files by assigning sequential field numbers starting from 1
 
