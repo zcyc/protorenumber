@@ -4,5 +4,11 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-regex = "1.7"
-clap = { version = "4.3", features = ["derive"] }
+regex = "*"
+clap = "*"
+
+[profile.release]
+lto = true
+strip = true
+panic = "abort"
+codegen-units = 1
