@@ -1,4 +1,4 @@
-use std::io::{Read, Write};
+use std::{cell::LazyCell, io::Read};
 
 pub fn renumber_field_numbers(
     proto_file: &str,
@@ -10,10 +10,13 @@ pub fn renumber_field_numbers(
         input_file.read_to_string(&mut input_str)?;
     }
 
-    let mut output_lines = Vec::new();
+    let message_start_pattern: LazyCell<regex::Regex> =
+        LazyCell::new(|| regex::Regex::new(r"^\s*message\s+\w+\s*\{").unwrap());
+    let field_pattern: LazyCell<regex::Regex> =
+        LazyCell::new(|| regex::Regex::new(r"^\s*(\w+)\s+(\w+)\s*=\s*\d+\s*;").unwrap());
 
-    let message_start_pattern = regex::Regex::new(r"^\s*message\s+\w+\s*\{")?;
-    let field_pattern = regex::Regex::new(r"^\s*(\w+)\s+(\w+)\s*=\s*\d+\s*;")?;
+    let line_count = input_str.lines().count();
+    let mut output_lines = Vec::with_capacity(line_count);
 
     let mut current_field_number = 1;
     let mut in_message_block = false;
@@ -32,11 +35,10 @@ pub fn renumber_field_numbers(
             if let Some(caps) = field_pattern.captures(trimmed_line) {
                 let field_type = &caps[1];
                 let field_name = &caps[2];
-                let new_line = format!(
+                output_lines.push(format!(
                     "  {} {} = {};",
                     field_type, field_name, current_field_number
-                );
-                output_lines.push(new_line);
+                ));
                 current_field_number += 1;
                 continue;
             }
@@ -45,8 +47,8 @@ pub fn renumber_field_numbers(
         output_lines.push(line.to_owned());
     }
 
-    let mut output = std::fs::File::create(output_file)?;
-    output.write_all((output_lines.join("\n") + "\n").as_bytes())?;
+    let output_string = output_lines.join("\n") + "\n";
+    std::fs::write(output_file, output_string.into_bytes())?;
 
     Ok(())
 }
