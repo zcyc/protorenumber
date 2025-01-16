@@ -1,16 +1,49 @@
-use std::fs::File;
-use std::io::{self, BufRead, Write};
-use regex::Regex;
-use clap::{Arg, Command};
+use std::io::{BufRead as _, Write};
 
-fn renumber_field_numbers(proto_file: &str, output_file: &str) -> Result<(), Box<dyn std::error::Error>> {
-    let input = File::open(proto_file)?;
-    let reader = io::BufReader::new(input);
+fn main() {
+    let matches = clap::Command::new("ProtoReorder")
+        .version("1.0")
+        .author("zcyc <8595764@qq.com>")
+        .about("A Rust tool to renumber Protobuf field numbers.")
+        .arg(
+            clap::Arg::new("input")
+                .short('i')
+                .long("input")
+                .required(true)
+                .value_parser(clap::builder::NonEmptyStringValueParser::new())
+                .help("Path to the input .proto file."),
+        )
+        .arg(
+            clap::Arg::new("output")
+                .short('o')
+                .long("output")
+                .required(true)
+                .value_parser(clap::builder::NonEmptyStringValueParser::new())
+                .help("Path to the output file with renumbered field numbers."),
+        )
+        .get_matches();
+
+    let input_file = matches.get_one::<String>("input").unwrap();
+    let output_file = matches.get_one::<String>("output").unwrap();
+
+    if let Err(e) = renumber_field_numbers(input_file, output_file) {
+        eprintln!("Error processing proto file: {}", e);
+    } else {
+        println!("Renumber proto file written to {}", output_file);
+    }
+}
+
+fn renumber_field_numbers(
+    proto_file: &str,
+    output_file: &str,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let input = std::fs::File::open(proto_file)?;
+    let reader = std::io::BufReader::new(input);
 
     let mut output_lines = Vec::new();
 
-    let message_start_pattern = Regex::new(r"^\s*message\s+\w+\s*\{")?;
-    let field_pattern = Regex::new(r"^\s*(\w+)\s+(\w+)\s*=\s*\d+\s*;")?;
+    let message_start_pattern = regex::Regex::new(r"^\s*message\s+\w+\s*\{")?;
+    let field_pattern = regex::Regex::new(r"^\s*(\w+)\s+(\w+)\s*=\s*\d+\s*;")?;
 
     let mut current_field_number = 1;
     let mut in_message_block = false;
@@ -30,7 +63,10 @@ fn renumber_field_numbers(proto_file: &str, output_file: &str) -> Result<(), Box
             if let Some(caps) = field_pattern.captures(trimmed_line) {
                 let field_type = &caps[1];
                 let field_name = &caps[2];
-                let new_line = format!("  {} {} = {};", field_type, field_name, current_field_number);
+                let new_line = format!(
+                    "  {} {} = {};",
+                    field_type, field_name, current_field_number
+                );
                 output_lines.push(new_line);
                 current_field_number += 1;
                 continue;
@@ -40,43 +76,10 @@ fn renumber_field_numbers(proto_file: &str, output_file: &str) -> Result<(), Box
         output_lines.push(line);
     }
 
-    let mut output = File::create(output_file)?;
+    let mut output = std::fs::File::create(output_file)?;
     for line in output_lines {
         writeln!(output, "{}", line)?;
     }
 
     Ok(())
-}
-
-fn main() {
-    let matches = Command::new("ProtoReorder")
-        .version("1.0")
-        .author("zcyc <8595764@qq.com>")
-        .about("A Rust tool to renumber Protobuf field numbers.")
-        .arg(
-            Arg::new("input")
-                .short('i')
-                .long("input")
-                .required(true)
-                .value_parser(clap::builder::NonEmptyStringValueParser::new())
-                .help("Path to the input .proto file."),
-        )
-        .arg(
-            Arg::new("output")
-                .short('o')
-                .long("output")
-                .required(true)
-                .value_parser(clap::builder::NonEmptyStringValueParser::new())
-                .help("Path to the output file with renumbered field numbers."),
-        )
-        .get_matches();
-
-    let input_file = matches.get_one::<String>("input").unwrap();
-    let output_file = matches.get_one::<String>("output").unwrap();
-
-    if let Err(e) = renumber_field_numbers(input_file, output_file) {
-        eprintln!("Error processing proto file: {}", e);
-    } else {
-        println!("Renumber proto file written to {}", output_file);
-    }
 }
