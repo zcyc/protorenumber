@@ -1,11 +1,14 @@
-use std::io::{BufRead as _, Write};
+use std::io::{Read, Write};
 
 pub fn renumber_field_numbers(
     proto_file: &str,
     output_file: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let input = std::fs::File::open(proto_file)?;
-    let reader = std::io::BufReader::new(input);
+    let mut input_str = String::new();
+    {
+        let mut input_file = std::fs::File::open(proto_file)?;
+        input_file.read_to_string(&mut input_str)?;
+    }
 
     let mut output_lines = Vec::new();
 
@@ -15,8 +18,7 @@ pub fn renumber_field_numbers(
     let mut current_field_number = 1;
     let mut in_message_block = false;
 
-    for line in reader.lines() {
-        let line = line?;
+    for line in input_str.lines() {
         let trimmed_line = line.trim();
 
         if message_start_pattern.is_match(trimmed_line) {
@@ -40,13 +42,11 @@ pub fn renumber_field_numbers(
             }
         }
 
-        output_lines.push(line);
+        output_lines.push(line.to_owned());
     }
 
     let mut output = std::fs::File::create(output_file)?;
-    for line in output_lines {
-        writeln!(output, "{}", line)?;
-    }
+    output.write_all((output_lines.join("\n") + "\n").as_bytes())?;
 
     Ok(())
 }
