@@ -30,7 +30,7 @@ fn renumber_field_numbers(proto_file: &str, output_file: &str) -> Result<(), Box
             if let Some(caps) = field_pattern.captures(trimmed_line) {
                 let field_type = &caps[1];
                 let field_name = &caps[2];
-                let new_line = format!("    {} {} = {};", field_type, field_name, current_field_number);
+                let new_line = format!("  {} {} = {};", field_type, field_name, current_field_number);
                 output_lines.push(new_line);
                 current_field_number += 1;
                 continue;
