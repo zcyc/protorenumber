@@ -1,7 +1,11 @@
 [package]
-name = "ProtoRenumber"
+name = "proto-renumber"
 version = "0.1.0"
 edition = "2021"
+
+[[bin]]
+name = "ProtoRenumber"
+path = "src/main.rs"
 
 [dependencies]
 regex = "*"
