@@ -42,8 +42,8 @@ rustc --version
 
 1. Clone the GitHub repository:
    ```bash
-   git clone https://github.com/yourname/protorenumber.git
-   cd protorenumber
+   git clone https://github.com/zcyc/ProtoRenumber.git
+   cd ProtoRenumber
    ```
 
 2. Compile the project in release mode:
@@ -53,7 +53,7 @@ rustc --version
 
 3. The compiled executable will be available in the `target/release` directory:
    ```bash
-   ./target/release/protorenumber
+   ./target/release/ProtoRenumber
    ```
 
 ---
@@ -63,7 +63,7 @@ rustc --version
 ### Command Syntax
 
 ```bash
-protorenumber --input <input_file> --output <output_file>
+ProtoRenumber --input <input_file> --output <output_file>
 ```
 
 ### Arguments
@@ -79,13 +79,13 @@ protorenumber --input <input_file> --output <output_file>
 To process a file located at `example.proto` and save the renumbered output to `renumbered_example.proto`:
 
 ```bash
-./target/release/protorenumber --input example.proto --output renumbered_example.proto
+./target/release/ProtoRenumber --input example.proto --output renumbered_example.proto
 ```
 
 Expected output:
 
 ```plaintext
-Reordered proto file written to renumbered_example.proto
+Renumbered proto file written to renumbered_example.proto
 ```
 
 ---
