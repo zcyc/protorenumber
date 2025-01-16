@@ -1,14 +1,13 @@
 syntax = "proto3";
 
 message User {
-    string name = 3;
-    int32 age = 1;
-    string email = 4;
+  string name = 3;
+  int32 age = 1;
+  string email = 4;
 }
 
-// Some comment
 message Product {
-    int32 id = 2;
-    string description = 6;
-    double price = 3;
+  int32 id = 2;
+  string description = 6;
+  double price = 3;
 }
