@@ -13,7 +13,7 @@ The tool is particularly useful for developers who want to clean up or reorganis
 ## Install
 
 ```bash
-cargo install --git https://github.com/zcyc/ProtoRenumber
+cargo install --git https://github.com/zcyc/protorenumber
 ```
 
 ## Usage
@@ -21,7 +21,7 @@ cargo install --git https://github.com/zcyc/ProtoRenumber
 ### Command Syntax
 
 ```bash
-ProtoRenumber --input <input_file> --output <output_file>
+protorenumber --input <input_file> --output <output_file>
 ```
 
 ### Arguments
@@ -32,7 +32,7 @@ ProtoRenumber --input <input_file> --output <output_file>
 ### Example
 
 ```bash
-ProtoRenumber --input example.proto --output output.proto
+protorenumber --input example.proto --output output.proto
 ```
 
 Expected output:

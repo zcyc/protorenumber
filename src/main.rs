@@ -24,7 +24,7 @@ fn main() {
     let input_file = matches.get_one::<String>("input").unwrap();
     let output_file = matches.get_one::<String>("output").unwrap();
 
-    if let Err(e) = proto_renumber::renumber_field_numbers(input_file, output_file) {
+    if let Err(e) = protorenumber::renumber_field_numbers(input_file, output_file) {
         eprintln!("Error processing proto file: {}", e);
     } else {
         println!("Renumber proto file written to: {}", output_file);

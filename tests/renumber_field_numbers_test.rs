@@ -3,7 +3,7 @@ use std::io::Read;
 #[test]
 pub fn renumber_field_numbers_test() {
     {
-        proto_renumber::renumber_field_numbers("example.proto", "output.proto").unwrap();
+        protorenumber::renumber_field_numbers("example.proto", "output.proto").unwrap();
         let mut f = std::fs::File::open("output.proto").unwrap();
         let mut buffer = String::new();
         f.read_to_string(&mut buffer).unwrap();
@@ -26,7 +26,7 @@ message Product {
         );
     }
     {
-        proto_renumber::renumber_field_numbers("output.proto", "output.proto").unwrap();
+        protorenumber::renumber_field_numbers("output.proto", "output.proto").unwrap();
         let mut f = std::fs::File::open("output.proto").unwrap();
         let mut buffer = String::new();
         f.read_to_string(&mut buffer).unwrap();
