@@ -1,4 +1,4 @@
-use std::io::{BufRead, Write};
+use std::io::{Read, Write};
 
 static MESSAGE_PATTERN: std::sync::OnceLock<regex::Regex> = std::sync::OnceLock::new();
 static FIELD_PATTERN: std::sync::OnceLock<regex::Regex> = std::sync::OnceLock::new();
@@ -15,8 +15,11 @@ pub fn renumber_field_numbers(
     proto_file: &str,
     output_file: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let input_file = std::fs::File::open(proto_file)?;
-    let reader = std::io::BufReader::new(input_file);
+    let mut input_str = String::new();
+    {
+        let mut input_file = std::fs::File::open(proto_file)?;
+        input_file.read_to_string(&mut input_str)?;
+    }
 
     let output_file = std::fs::File::create(output_file)?;
     let mut writer = std::io::BufWriter::new(output_file);
@@ -24,8 +27,7 @@ pub fn renumber_field_numbers(
     let mut current_field_number = 1;
     let mut in_message_block = false;
 
-    for line in reader.lines() {
-        let line = line?;
+    for line in input_str.lines() {
         let trimmed_line = line.trim();
 
         if get_message_pattern().is_match(trimmed_line) {
